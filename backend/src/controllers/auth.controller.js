@@ -2,13 +2,16 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
-const setCookie = (res, token)=>{
+const setCookie = (res, token) => {
+  const isProd = process.env.NODE_ENV === "production";
+
   res.cookie(process.env.COOKIE_NAME, token, {
-    httpOnly:true,
-    secure:false, // true in prod
-    sameSite:"lax"
+    httpOnly: true,
+    secure: isProd,                         // 🔥 HTTPS only in production
+    sameSite: isProd ? "none" : "lax",      // 🔥 Required for cross-domain cookies
   });
 };
+
 
 export const signup = async(req,res)=>{
   try{
@@ -26,12 +29,9 @@ export const signup = async(req,res)=>{
       role: role === "admin" ? "admin" : "user"   // 👈 role support
     });
 
-    const token = jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:"7d"});
-    res.cookie(process.env.COOKIE_NAME, token, {
-      httpOnly:true,
-      secure:false,
-      sameSite:"lax"
-    });
+      const token = jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:"7d"});
+      setCookie(res, token);
+
 
     res.json({
       message:"Signup success",
