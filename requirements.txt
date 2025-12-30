@@ -1,0 +1,15 @@
+Node.js 20+
+Express
+Mongoose
+bcrypt
+jsonwebtoken
+cookie-parser
+cors
+dotenv
+express-validator
+
+Testing:
+Jest
+Supertest
+mongodb-memory-server
+cross-env
